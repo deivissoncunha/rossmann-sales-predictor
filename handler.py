@@ -63,6 +63,10 @@ def rossmann_predict():
             on='store'
         )
 
+        # DEBUG
+        print(test_raw.columns)
+        print(test_raw.head())
+
         # pipeline
         pipeline = Rossmann()
 
