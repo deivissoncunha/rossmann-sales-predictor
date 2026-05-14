@@ -89,6 +89,14 @@ def rossmann_predict():
     return Response({}, status=200, mimetype='application/json')
 
 # =========================================================
+# Home
+# =========================================================
+
+@app.route('/')
+def home():
+    return 'Rossmann Sales Predictor API is running!'
+
+# =========================================================
 # Main
 # =========================================================
 
