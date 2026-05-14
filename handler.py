@@ -59,7 +59,9 @@ def rossmann_predict():
             test_raw = pd.DataFrame(test_json)
         
         # lowercase request columns
-        test_raw.columns = map(str.lower, test_raw.columns)
+        test_raw = test_raw.rename(
+            columns=lambda c: re.sub(r'(?<!^)(?=[A-Z])', '_', c).lower()
+        )
         
         # ensure same dtype
         test_raw['store'] = test_raw['store'].astype(int)        
