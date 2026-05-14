@@ -55,6 +55,10 @@ def rossmann_predict():
         # lowercase columns
         test_raw.columns = map(str.lower, test_raw.columns)
 
+        # ensure same dtype
+        test_raw['store'] = test_raw['store'].astype(int)
+        df_store_raw['store'] = df_store_raw['store'].astype(int)
+
         # merge store dataset
         test_raw = pd.merge(
             test_raw,
@@ -64,7 +68,10 @@ def rossmann_predict():
         )
 
         # DEBUG
+        print('TEST RAW COLUMNS:')
         print(test_raw.columns)
+
+        print('\nTEST RAW HEAD:')
         print(test_raw.head())
 
         # pipeline
@@ -83,7 +90,7 @@ def rossmann_predict():
 
 # =========================================================
 # Main
-# =========================================================7
+# =========================================================
 
 if __name__ == '__main__':
     port = os.environ.get('PORT', 5000)
