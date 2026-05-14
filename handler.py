@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import pandas as pd
 
@@ -29,8 +30,13 @@ model = pickle.load(open(model_path, 'rb'))
 # load store dataset
 df_store_raw = pd.read_csv(store_path)
 
-# lowercase columns
-df_store_raw.columns = map(str.lower, df_store_raw.columns)
+# convert CamelCase to snake_case
+df_store_raw = df_store_raw.rename(
+    columns=lambda c: re.sub(r'(?<!^)(?=[A-Z])', '_', c).lower()
+)
+
+# ensure dtype
+df_store_raw['store'] = df_store_raw['store'].astype(int)
 
 # ============================================================
 # initialize API
@@ -52,12 +58,11 @@ def rossmann_predict():
         else:
             test_raw = pd.DataFrame(test_json)
         
-        # lowercase columns
+        # lowercase request columns
         test_raw.columns = map(str.lower, test_raw.columns)
-
+        
         # ensure same dtype
-        test_raw['store'] = test_raw['store'].astype(int)
-        df_store_raw['store'] = df_store_raw['store'].astype(int)
+        test_raw['store'] = test_raw['store'].astype(int)        
 
         # merge store dataset
         test_raw = pd.merge(
@@ -65,14 +70,7 @@ def rossmann_predict():
             df_store_raw,
             how='left',
             on='store'
-        )
-
-        # DEBUG
-        print('TEST RAW COLUMNS:')
-        print(test_raw.columns)
-
-        print('\nTEST RAW HEAD:')
-        print(test_raw.head())
+        )        
 
         # pipeline
         pipeline = Rossmann()
