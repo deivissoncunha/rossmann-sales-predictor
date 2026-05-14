@@ -145,7 +145,7 @@ class Rossmann (object):
         })
 
         # state holiday
-        df2['state_holiday'] = df2['state_holiday'].map({
+        df2['state_holiday_desc'] = df2['state_holiday'].map({
             'a':'public_holiday',
             'b':'easter_holiday',
             'c':'christmas',
@@ -192,10 +192,7 @@ class Rossmann (object):
         df4['year'] = self.year_scaler.transform( df4[['year']].values )
 
         # Encoding
-
-        # state_holiday - One Hot Encoding
-        df4 = pd.get_dummies( df4, prefix=['state_holiday'], columns=['state_holiday'] )
-
+        
         # store_type - Label Encoding        
         df4['store_type'] = self.store_type_scaler.transform( df4['store_type'] )        
 
