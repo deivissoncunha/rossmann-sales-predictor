@@ -64,17 +64,37 @@ def load_dataset( store_id ):
 
 
 def predict ( data ):
+    
     # api call
     url = 'https://rossmann-sales-predictor-05it.onrender.com/predict'
 
-    r = requests.post(url, json=data)
+    try:
 
-    print(r.status_code)
-    print(r.text)
+        r = requests.post(url, json=data, timeout=120)
 
-    d1 = pd.DataFrame( r.json(), columns=r.json()[0].keys() )
+        print(r.status_code)
+        print(r.text)
+
+        # verificacao se a API respondeu corretamente
+        if r.status_code != 200:
+            return 'error'
+        
+        # transformacao da resposta em dataframe
+        d1 = pd.DataFrame( r.json(), columns=r.json()[0].keys() )
+        
+        return d1
     
-    return d1
+    except requests.exceptions.Timeout:
+        print('Request Timeout')
+        return 'error'
+
+    except requests.exceptions.ConnectionError:
+        print('Connection Error')
+        return 'error'
+
+    except Exception as e:
+        print(f'Unexpected Error: {e}')
+        return 'error'
 
 def parse_message( message ):
     chat_id = message['message']['chat']['id']
@@ -113,6 +133,11 @@ def index():
 
                 # prediction
                 d1 = predict( data )
+
+                if isinstance(d1, str):
+                    send_message(chat_id, 'Prediction service unavailable')
+
+                    return Response('OK', status=200)
 
                 # calculation
                 d2 = d1[['store', 'prediction']].groupby( 'store' ).sum().reset_index()
