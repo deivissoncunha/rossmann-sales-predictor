@@ -10,21 +10,7 @@ import numpy as np
 from flask import Flask, request, Response
 
 # contants
-TOKEN = '8627283937:AAHkSpBpZesmkd3_ZbVRD0a2ifERiphzy1g'
-
-# # info about the Bot
-# #https://api.telegram.org/bot8627283937:AAHkSpBpZesmkd3_ZbVRD0a2ifERiphzy1g/getMe
-
-
-# # get updates
-# https://api.telegram.org/bot8627283937:AAHkSpBpZesmkd3_ZbVRD0a2ifERiphzy1g/getUpdates
-
-# # Wehook
-# https://api.telegram.org/bot8627283937:AAHkSpBpZesmkd3_ZbVRD0a2ifERiphzy1g/setWebhook?url=https://a5f3322f6a16ff.lhr.life
-
-# # send message
-# https://api.telegram.org/bot8627283937:AAHkSpBpZesmkd3_ZbVRD0a2ifERiphzy1g/sendMessage?chat_id=2135610318&text=Hi Deivisson, I am doing good, thanks!
-
+TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
 def send_message( chat_id, text ):
 
