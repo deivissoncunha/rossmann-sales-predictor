@@ -1,15 +1,12 @@
 
 import re
 import requests
-import json
 import os
-
-import pandas as pd
 import numpy as np
 
 from flask import Flask, request, Response
 
-# contants
+# constants
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
 def send_message( chat_id, text ):
@@ -77,12 +74,9 @@ def predict ( data ):
 
         # verificacao se a API respondeu corretamente
         if r.status_code != 200:
-            return 'error'
-        
-        # transformacao da resposta em dataframe
-        d1 = pd.DataFrame( r.json(), columns=r.json()[0].keys() )
-        
-        return d1
+            return 'error'        
+              
+        return r.json()
     
     except requests.exceptions.Timeout:
         print('Request Timeout')
@@ -138,15 +132,15 @@ def index():
                     send_message(chat_id, 'Prediction service unavailable')
 
                     return Response('OK', status=200)
-
-                # calculation
-                d2 = d1[['store', 'prediction']].groupby( 'store' ).sum().reset_index()
-
-                # send message
-                msg = 'Store Number {} will sell R${:,.2f} in the next 6 weeks'.format(
-                                d2.loc[0, 'store'],
-                                d2.loc[0, 'prediction']) 
                 
+                # send message
+                msg = (
+                    f"📈 Store {d1['store']}\n\n"
+                    f"Predicted Sales (6 weeks): R${d1['prediction']:,.2f}\n\n"
+                    f"📉 Worst Scenario: R${d1['worst_scenario']:,.2f}\n"
+                    f"📈 Best Scenario: R${d1['best_scenario']:,.2f}"
+                )
+
                 send_message(chat_id, msg)
 
                 return Response( 'Ok', status=200)
