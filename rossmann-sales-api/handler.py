@@ -1,6 +1,7 @@
 import os
 import re
 import pickle
+import json
 import pandas as pd
 
 from flask import Flask, request, Response
@@ -84,7 +85,29 @@ def rossmann_predict():
         # prediction
         df_response = pipeline.get_prediction(model, test_raw, df3)
 
-        return df_response
+        # ============================================================
+        # Business Metrics
+        # ============================================================
+
+        MODEL_MAPE = 0.0951
+
+        prediction = df_response['prediction'].sum()
+
+        worst_case = prediction * (1 - MODEL_MAPE)
+        best_case  = prediction * (1 + MODEL_MAPE)
+
+        response = {
+            'store': int(df_response['store'].iloc[0]),
+            'prediction': round(prediction, 2),
+            'worst_scenario': round(worst_case, 2),
+            'best_scenario': round(best_case, 2)
+        }
+        
+        return Response(
+        json.dumps(response),
+        status=200,
+        mimetype='application/json'
+)
 
     return Response({}, status=200, mimetype='application/json')
 
