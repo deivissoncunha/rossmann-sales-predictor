@@ -98,9 +98,9 @@ def rossmann_predict():
 
         response = {
             'store': int(df_response['store'].iloc[0]),
-            'prediction': round(prediction, 2),
-            'worst_scenario': round(worst_case, 2),
-            'best_scenario': round(best_case, 2)
+            'prediction': round(float(prediction), 2),
+            'worst_scenario': round(float(worst_case), 2),
+            'best_scenario': round(float(best_case), 2)
         }
         
         return Response(
